@@ -34,7 +34,7 @@ local function on_code_action_results(results, context, options)
         action.title = action.title:gsub("\n", "\\n")
 
         local action_tuple
-        if vim.version() >= vim.version.parse("0.10.0") then
+        if not config.options.popup.enable and vim.version() >= vim.version.parse("0.10.0") then
           tuple = { ctx = { client_id = client_id }, action = { title = action.title } }
         else
           tuple = { client_id, action }
