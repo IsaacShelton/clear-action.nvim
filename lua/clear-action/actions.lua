@@ -32,7 +32,15 @@ local function on_code_action_results(results, context, options)
       if action_filter(action) then
         action.title = action.title:gsub("\r\n", "\\r\\n")
         action.title = action.title:gsub("\n", "\\n")
-        table.insert(action_tuples, { client_id, action })
+
+        local action_tuple
+        if vim.version() >= vim.version.parse("0.10.0") then
+          tuple = { ctx = { client_id = client_id }, action = { title = action.title } }
+        else
+          tuple = { client_id, action }
+        end
+
+        table.insert(action_tuples, tuple)
       end
     end
   end
@@ -52,7 +60,11 @@ local function on_code_action_results(results, context, options)
         prompt = "Code actions:",
         kind = "codeaction",
         format_item = function(action_tuple)
-          return action_tuple[2].title
+          if vim.version() >= vim.version.parse("0.10.0") then
+            return action_tuple.action.title
+          else
+            return action_tuple[2].title
+          end
         end,
       }, on_select)
     end
